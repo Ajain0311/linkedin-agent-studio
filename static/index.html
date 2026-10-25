@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Agent Studio 2.0 | Cinematic AI Command Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #060709;
+      color: #E2E8F0;
+    }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .glass {
+      background: rgba(13, 17, 26, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .glass-active {
+      border: 1px solid rgba(59, 130, 246, 0.5);
+      background: rgba(26, 38, 64, 0.65);
+    }
+    .cyber-glow {
+      box-shadow: 0 0 40px -5px rgba(37, 99, 235, 0.25);
+    }
+    .bg-mesh {
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.14) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.14) 0px, transparent 50%),
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.5); }
+  </style>
+</head>
+<body class="min-h-screen bg-mesh flex flex-col">
+
+  <!-- Top Cinematic Navigation -->
+  <header class="glass sticky top-0 z-50 px-8 py-3.5 flex items-center justify-between border-b border-white/[0.08]">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+        <i class="fa-brands fa-linkedin-in text-lg"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-base tracking-tight flex items-center gap-2">
+          LinkedIn Agent Studio <span class="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full font-mono">v2.0 AI BRAIN</span>
+        </h1>
+        <p class="text-xs text-slate-400">Command Center for <span class="text-white font-medium">Aditya Dhing</span> • Full Stack & AI Engineer</p>
+      </div>
+    </div>
+
+    <!-- Auth Status & Controls -->
+    <div class="flex items-center gap-3">
+      <div id="connStatusBadge" class="flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-full glass border-white/10">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span class="text-slate-300">Checking Auth...</span>
+      </div>
+
+      <button onclick="openAuthModal()" class="px-4 py-2 text-xs font-semibold rounded-xl glass hover:bg-white/10 border border-blue-500/30 text-blue-300 transition-all flex items-center gap-2">
+        <i class="fa-solid fa-key"></i> Auth Vault
+      </button>
+
+      <button id="btnPublishTop" onclick="publishPost()" class="px-5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white transition-all shadow-lg shadow-blue-600/30 flex items-center gap-2">
+        <i class="fa-solid fa-paper-plane"></i> Publish Now
+      </button>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Studio Layout -->
+  <main class="flex-1 max-w-[1500px] w-full mx-auto p-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
+
+    <!-- ── LEFT: AI Brainstormer & Pre-Trained Ideas (4 Cols) ── -->
+    <div class="xl:col-span-4 flex flex-col gap-5">
+
+      <!-- Gemini AI Extra Brain Card -->
+      <div class="glass rounded-2xl p-5 border border-blue-500/30 shadow-xl shadow-blue-500/10 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <h2 class="font-bold text-sm tracking-wide text-white flex items-center gap-2">
+              <i class="fa-solid fa-brain text-cyan-400"></i> AI Brainstormer
+            </h2>
+          </div>
+          <span class="text-[10px] font-mono text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">Gemini 2.5</span>
+        </div>
+
+        <div class="flex flex-col gap-2.5">
+          <label class="text-[11px] font-mono text-slate-400">TOPIC OR TECH CONCEPT</label>
+          <div class="relative">
+            <input id="aiTopicInput" type="text" class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-all" placeholder="e.g. SignalR vs WebSockets, Caching 1M keys in .NET...">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[11px] font-mono text-slate-400">POST TONE</label>
+              <select id="aiToneSelect" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-cyan-400">
+                <option value="authority">Senior Architect</option>
+                <option value="curious">Curious Builder</option>
+                <option value="contrarian">Contrarian / Hot Take</option>
+                <option value="story">Casual Storyteller</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] font-mono text-slate-400">OPTIONAL API KEY</label>
+              <input id="aiKeyInput" type="password" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-400" placeholder="GEMINI_KEY">
+            </div>
+          </div>
+
+          <button id="btnAiGenerate" onclick="generateWithAi()" class="mt-1 w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-cyan-600/20">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Brainstorm Full Post & Hooks
+          </button>
+        </div>
+
+        <!-- Generated Hooks Carousel/Picker -->
+        <div id="hooksBox" class="hidden flex flex-col gap-2 pt-2 border-t border-white/10">
+          <span class="text-[10px] font-mono text-slate-400 uppercase">Click a hook to swap opening line:</span>
+          <div id="hooksList" class="flex flex-col gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- Curated Pillars Stream -->
+      <div class="glass rounded-2xl p-5 border border-white/10 flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-400 font-mono">Curated SWE Pillars</h3>
+          <span class="text-[10px] text-slate-500 font-mono">4 Ready Posts</span>
+        </div>
+        <div id="ideasList" class="flex flex-col gap-3 overflow-y-auto max-h-[380px] pr-1"></div>
+      </div>
+
+    </div>
+
+    <!-- ── CENTER & RIGHT: Live Mockup, Image Management & Publisher (8 Cols) ── -->
+    <div class="xl:col-span-8 flex flex-col gap-6">
+
+      <!-- Main Post Editor Card -->
+      <div class="glass rounded-2xl p-6 cyber-glow border border-white/10 flex flex-col gap-5">
+
+        <!-- LinkedIn Author Header Mockup -->
+        <div class="flex items-center justify-between pb-4 border-b border-white/[0.08]">
+          <div class="flex items-center gap-3">
+            <img src="https://avatars.githubusercontent.com/u/101290332?v=4" class="w-12 h-12 rounded-full border border-blue-500/50 shadow-md" alt="Avatar">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-white">Aditya Dhing</span>
+                <span class="text-xs text-slate-500">• 1st</span>
+              </div>
+              <p class="text-xs text-slate-400 truncate max-w-sm">Full Stack Software Engineer | .NET Core · React.js · AI Applications</p>
+              <div class="flex items-center gap-1 text-[11px] text-slate-500">
+                <span>Just now</span> • <i class="fa-solid fa-earth-americas text-[10px]"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span id="charCount" class="text-xs font-mono text-slate-400">0 chars</span>
+          </div>
+        </div>
+
+        <!-- Post Textarea -->
+        <textarea id="postEditor" rows="8" oninput="updateCharCount()" class="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-sm text-slate-200 focus:outline-none focus:border-blue-500/60 leading-relaxed font-sans resize-none" placeholder="Select an idea, generate via AI, or write your post here..."></textarea>
+
+        <!-- ── Media & Image Manager ── -->
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-images text-blue-400"></i>
+              <span class="font-bold text-xs uppercase tracking-wider text-slate-300 font-mono">Post Attachments & Images</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="toggleRepoAssetsModal()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/30 transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-folder-tree"></i> Repo Diagrams
+              </button>
+              <button onclick="renderCurrentBanner()" class="px-3 py-1.5 rounded-lg text-xs font-medium glass hover:bg-white/10 text-cyan-300 border border-cyan-500/20 transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-wand-magic"></i> Auto Dark Banner
+              </button>
+            </div>
+          </div>
+
+          <!-- BIG CINEMATIC UPLOAD DROPZONE BUTTON -->
+          <div onclick="document.getElementById('customFileInput').click()" class="cursor-pointer border-2 border-dashed border-blue-500/40 hover:border-blue-400/80 bg-blue-950/20 hover:bg-blue-950/40 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-center gap-3 transition-all group">
+            <input id="customFileInput" type="file" multiple accept="image/*" class="hidden" onchange="handleFileUpload(event)">
+            <div class="w-10 h-10 rounded-full bg-blue-600/30 group-hover:bg-blue-600/50 flex items-center justify-center text-blue-400 group-hover:text-white transition-all shadow-lg shadow-blue-500/20">
+              <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+            </div>
+            <div class="text-center sm:text-left">
+              <p class="text-xs font-bold text-white group-hover:text-blue-300 transition-colors flex items-center gap-1.5">
+                <span>📁 Click to Upload Screenshots & Photos</span>
+                <span class="text-[10px] text-blue-400 font-mono bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">PNG, JPG, WEBP</span>
+              </p>
+              <p class="text-[11px] text-slate-400">Select single or multiple project images directly from your laptop</p>
+            </div>
+          </div>
+
+          <!-- Image Preview Carousel / Grid -->
+          <div id="imageGallery" class="grid grid-cols-2 sm:grid-cols-3 gap-3 min-h-[140px] p-3 rounded-xl bg-black/40 border border-white/10">
+            <div id="noImagesPlaceholder" class="col-span-full flex flex-col items-center justify-center py-6 text-slate-500 text-xs gap-2">
+              <i class="fa-regular fa-image text-2xl text-slate-600"></i>
+              <span>No images attached yet. Click the upload button above to add pictures!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Publish Footer -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-white/[0.08]">
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+            <span>Verified Post Creator</span>
+          </div>
+
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <!-- 1-Click Native Share (Zero Error / 100% Guaranteed) -->
+            <button onclick="publishViaNativeShare()" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
+              <i class="fa-brands fa-linkedin text-sm"></i> 1-Click Open Pre-Filled LinkedIn
+            </button>
+
+            <!-- Playwright Background Bot -->
+            <button id="btnPublish" onclick="publishPost()" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-robot text-xs"></i> Playwright Auto-Bot
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Telemetry Terminal -->
+      <div class="glass rounded-xl p-4 border border-white/10 font-mono text-xs text-slate-400 flex flex-col gap-1.5">
+        <div class="flex items-center justify-between text-[11px] text-slate-500 border-b border-white/[0.06] pb-1.5 mb-1">
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> AGENT LOGS</span>
+          <span id="telemetryTime">Ready</span>
+        </div>
+        <div id="terminalLog" class="text-slate-300">Agent Studio 2.0 initialized. Ready for AI brainstorming & publishing.</div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ── AUTHENTICATION MODAL ── -->
+  <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass rounded-2xl max-w-lg w-full p-6 border border-white/15 flex flex-col gap-5 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white"><i class="fa-solid fa-key text-xs"></i></div>
+          <h3 class="font-bold text-sm text-white">LinkedIn Authentication Vault</h3>
+        </div>
+        <button onclick="closeAuthModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-sm"></i></button>
+      </div>
+
+      <div class="flex flex-col gap-4 text-xs">
+        <!-- Option 1: Browser Interactive -->
+        <div class="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-desktop text-blue-400"></i> Method 1: 1-Click Browser Login (Easiest)</span>
+            <span class="text-[10px] text-emerald-400 font-mono">Recommended</span>
+          </div>
+          <p class="text-slate-300">Opens a real Chromium browser window to LinkedIn. Simply log in, and the agent securely captures your session cookie locally.</p>
+          <button id="btnModalLaunch" onclick="launchInteractiveAuth()" class="py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Login Window
+          </button>
+        </div>
+
+        <!-- Option 2: 2 Direct Input Boxes -->
+        <div class="p-4 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col gap-3">
+          <span class="font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-cookie-bite text-amber-400"></i> Direct LinkedIn Tokens (F12 → Cookies)</span>
+          <p class="text-[11px] text-slate-400">Chrome mein <code class="text-blue-400 font-mono">F12 → Application → Cookies → linkedin.com</code> se dono values copy karke yahan paste karo:</p>
+          
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-mono text-cyan-300">1. LI_AT TOKEN (Value):</label>
+            <input id="liAtInput" type="text" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono" placeholder="AQEDATxxxxxxxxx...">
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-mono text-cyan-300">2. JSESSIONID TOKEN (Value):</label>
+            <input id="jsessionInput" type="text" class="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono" placeholder='"ajax:123456789..."'>
+          </div>
+
+          <button onclick="saveTwoTokens()" class="mt-1 py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30">
+            <i class="fa-solid fa-floppy-disk"></i> Save & Connect LinkedIn
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REPO ASSETS PICKER MODAL ── -->
+  <div id="repoModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass rounded-2xl max-w-2xl w-full p-6 border border-white/15 flex flex-col gap-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white"><i class="fa-solid fa-diagram-project text-xs"></i></div>
+          <h3 class="font-bold text-sm text-white">Repository Diagrams & Visual Assets</h3>
+        </div>
+        <button onclick="toggleRepoAssetsModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-sm"></i></button>
+      </div>
+
+      <p class="text-xs text-slate-300">Click any diagram or asset extracted from your local projects (AI Agents, System Design, Portfolio) to instantly attach it to your LinkedIn post:</p>
+
+      <div id="repoAssetsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[420px] overflow-y-auto p-2"></div>
+    </div>
+  </div>
+
+  <script>
+    let activeIdea = null;
+    let attachedImages = []; // Array of { filename, url }
+
+    async function init() {
+      await checkStatus();
+      await loadIdeas();
+      updateCharCount();
+    }
+
+    async function checkStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        const badge = document.getElementById('connStatusBadge');
+        if (data.authenticated) {
+          badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> <span class="text-emerald-400">Authenticated</span>`;
+        } else {
+          badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> <span class="text-amber-400">Auth Needed</span>`;
+        }
+      } catch (e) {
+        logTerminal("Status check error.");
+      }
+    }
+
+    async function loadIdeas() {
+      try {
+        const res = await fetch('/api/ideas');
+        const ideas = await res.json();
+        const container = document.getElementById('ideasList');
+        container.innerHTML = '';
+
+        ideas.forEach((idea, idx) => {
+          const card = document.createElement('div');
+          card.className = `glass p-3.5 rounded-xl cursor-pointer hover:border-blue-500/40 transition-all flex flex-col gap-1.5 ${idx === 0 ? 'glass-active' : ''}`;
+          card.onclick = () => selectIdea(idea, card);
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono uppercase text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">${idea.tag}</span>
+              <span class="text-[10px] text-slate-500 font-mono">${idea.category}</span>
+            </div>
+            <h4 class="font-semibold text-xs text-white">${idea.title}</h4>
+          `;
+          container.appendChild(card);
+        });
+
+        if (ideas.length > 0) {
+          selectIdea(ideas[0], container.children[0]);
+        }
+      } catch (e) {
+        logTerminal("Ideas load error: " + e.message);
+      }
+    }
+
+    function selectIdea(idea, element) {
+      activeIdea = idea;
+      document.querySelectorAll('#ideasList > div').forEach(el => el.classList.remove('glass-active'));
+      if (element) element.classList.add('glass-active');
+
+      document.getElementById('postEditor').value = idea.content;
+      updateCharCount();
+      logTerminal(`Loaded idea: "${idea.title}"`);
+      renderCurrentBanner();
+    }
+
+    async function generateWithAi() {
+      const topic = document.getElementById('aiTopicInput').value.trim();
+      if (!topic) {
+        alert("Please enter a topic to brainstorm!");
+        return;
+      }
+      const tone = document.getElementById('aiToneSelect').value;
+      const key = document.getElementById('aiKeyInput').value.trim();
+      const btn = document.getElementById('btnAiGenerate');
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Brainstorming with AI...`;
+      logTerminal(`Generating viral SWE post for topic: "${topic}"...`);
+
+      try {
+        const res = await fetch('/api/brainstorm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic, tone, gemini_key: key })
+        });
+        const data = await res.json();
+        
+        document.getElementById('postEditor').value = data.content;
+        updateCharCount();
+
+        // Populate hooks
+        if (data.hooks && data.hooks.length > 0) {
+          const hooksBox = document.getElementById('hooksBox');
+          const hooksList = document.getElementById('hooksList');
+          hooksList.innerHTML = '';
+          data.hooks.forEach(h => {
+            const hDiv = document.createElement('div');
+            hDiv.className = "text-xs p-2 rounded bg-black/40 border border-white/10 hover:border-cyan-400 cursor-pointer text-slate-300 transition-all";
+            hDiv.innerText = `💡 "${h}"`;
+            hDiv.onclick = () => swapOpeningHook(h);
+            hooksList.appendChild(hDiv);
+          });
+          hooksBox.classList.remove('hidden');
+        }
+
+        activeIdea = {
+          title: data.banner_title || topic,
+          subtitle: data.banner_subtitle || "Architectural breakdown & system design",
+          tag: data.tag || "Engineering"
+        };
+        await renderCurrentBanner();
+        logTerminal(`AI generation complete!`);
+
+      } catch (e) {
+        logTerminal("AI Generation failed: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Brainstorm Full Post & Hooks`;
+      }
+    }
+
+    function swapOpeningHook(newHook) {
+      const editor = document.getElementById('postEditor');
+      const lines = editor.value.split('\n');
+      lines[0] = newHook;
+      editor.value = lines.join('\n');
+      logTerminal("Swapped opening hook!");
+    }
+
+    async function renderCurrentBanner() {
+      if (!activeIdea) return;
+      logTerminal("Rendering dark-tech banner with PIL...");
+      try {
+        const res = await fetch('/api/generate-banner', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: activeIdea.title,
+            subtitle: activeIdea.subtitle,
+            tag: activeIdea.tag
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          // Add or replace banner in attached images
+          attachedImages = attachedImages.filter(img => !img.filename.startsWith('banner_'));
+          attachedImages.unshift({ filename: data.filename, url: data.image_url + '?t=' + Date.now(), isBanner: true });
+          renderGallery();
+          logTerminal("Banner rendered & attached.");
+        }
+      } catch (e) {
+        logTerminal("Banner error: " + e.message);
+      }
+    }
+
+    async function handleFileUpload(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      const formData = new FormData();
+      for (let f of files) {
+        formData.append('files', f);
+      }
+
+      logTerminal(`Uploading ${files.length} custom image(s)...`);
+      try {
+        const res = await fetch('/api/upload-images', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.status === 'success') {
+          data.filenames.forEach((fn, idx) => {
+            attachedImages.push({ filename: fn, url: data.urls[idx] });
+          });
+          renderGallery();
+          logTerminal(`Uploaded ${data.filenames.length} image(s) successfully!`);
+        }
+      } catch (e) {
+        logTerminal("Upload error: " + e.message);
+      }
+    }
+
+    function renderGallery() {
+      const gallery = document.getElementById('imageGallery');
+      const placeholder = document.getElementById('noImagesPlaceholder');
+
+      if (attachedImages.length === 0) {
+        gallery.innerHTML = '';
+        gallery.appendChild(placeholder);
+        placeholder.classList.remove('hidden');
+        return;
+      }
+
+        gallery.innerHTML = '';
+        attachedImages.forEach((img, idx) => {
+          const item = document.createElement('div');
+          item.className = "relative rounded-lg overflow-hidden border border-white/20 aspect-video group bg-black";
+          item.innerHTML = `
+            <img src="${img.url}" class="w-full h-full object-cover">
+            ${img.isBanner ? '<span class="absolute top-1.5 left-1.5 text-[9px] bg-blue-600/80 text-white px-1.5 py-0.5 rounded font-mono">BANNER</span>' : ''}
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <button onclick="copyImageToClipboard('${img.url}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1 shadow-md">
+                <i class="fa-solid fa-copy text-[11px]"></i> Copy / Paste Image
+              </button>
+              <a href="${img.url}" download="${img.filename}" class="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1 shadow-md">
+                <i class="fa-solid fa-download text-[11px]"></i> Download
+              </a>
+              <button onclick="removeImage(${idx})" class="w-7 h-7 rounded-lg bg-red-600/80 hover:bg-red-500 text-white text-xs flex items-center justify-center">
+                <i class="fa-solid fa-trash text-[10px]"></i>
+              </button>
+            </div>
+          `;
+          gallery.appendChild(item);
+        });
+    }
+
+    function removeImage(idx) {
+      attachedImages.splice(idx, 1);
+      renderGallery();
+      logTerminal("Image removed.");
+    }
+
+    async function copyImageToClipboard(imgUrl) {
+      try {
+        const response = await fetch(imgUrl);
+        const blob = await response.blob();
+        await navigator.clipboard.write([
+          new ClipboardItem({ [blob.type]: blob })
+        ]);
+        alert("Image copied to clipboard! You can now just press Ctrl + V inside LinkedIn to attach it!");
+      } catch (err) {
+        // Fallback: trigger download
+        const a = document.createElement('a');
+        a.href = imgUrl;
+        a.download = 'linkedin_post_image.png';
+        a.click();
+        alert("Image downloaded! Simply drag it into LinkedIn.");
+      }
+    }
+
+    function publishViaNativeShare() {
+      const text = document.getElementById('postEditor').value.trim();
+      if (!text) {
+        alert("Please write or generate post content first!");
+        return;
+      }
+      
+      // Auto-copy text to clipboard so user can paste in 1 second if needed
+      navigator.clipboard.writeText(text).catch(() => {});
+      logTerminal("Post copied to clipboard! Opening LinkedIn share modal...");
+
+      const encoded = encodeURIComponent(text);
+      const shareUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${encoded}`;
+      
+      window.open(shareUrl, '_blank');
+    }
+
+    async function publishPost() {
+      const text = document.getElementById('postEditor').value.trim();
+      if (!text) {
+        alert("Please enter post content.");
+        return;
+      }
+      const btn = document.getElementById('btnPublish');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Automating Playwright...`;
+      logTerminal(`Launching Playwright publisher with ${attachedImages.length} image(s)...`);
+
+      try {
+        const res = await fetch('/api/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: text,
+            image_filenames: attachedImages.map(img => img.filename)
+          })
+        });
+        const data = await res.json();
+        logTerminal(data.message);
+        alert(data.message);
+      } catch (e) {
+        logTerminal("Publish error: " + e.message);
+        alert("Error publishing: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane text-sm"></i> Publish Post with Images`;
+      }
+    }
+
+    function updateCharCount() {
+      const len = document.getElementById('postEditor').value.length;
+      document.getElementById('charCount').innerText = `${len} chars`;
+    }
+
+    // Modal & Auth Controls
+    function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
+    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+
+    async function launchInteractiveAuth() {
+      const btn = document.getElementById('btnModalLaunch');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Login in browser...`;
+      logTerminal("Opening Chromium browser for LinkedIn login authentication...");
+      try {
+        const res = await fetch('/api/auth/launch-login', { method: 'POST' });
+        const data = await res.json();
+        logTerminal(data.message);
+        alert(data.message);
+        closeAuthModal();
+        await checkStatus();
+      } catch (e) {
+        logTerminal("Auth error: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Open Login Window`;
+      }
+    }
+
+    async function saveTwoTokens() {
+      const liAt = document.getElementById('liAtInput').value.trim();
+      const jsession = document.getElementById('jsessionInput').value.trim();
+
+      if (!liAt) {
+        alert("Please enter the li_at cookie value.");
+        return;
+      }
+
+      logTerminal("Saving LinkedIn tokens...");
+      try {
+        const payload = jsession ? `${liAt}\n${jsession}` : liAt;
+        const res = await fetch('/api/auth/save-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ li_at: payload })
+        });
+        const data = await res.json();
+        alert(data.message);
+        closeAuthModal();
+        await checkStatus();
+        logTerminal("LinkedIn session ready & authenticated!");
+      } catch (e) {
+        alert("Error saving tokens: " + e.message);
+      }
+    }
+
+    function logTerminal(msg) {
+      document.getElementById('terminalLog').innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      document.getElementById('telemetryTime').innerText = new Date().toLocaleTimeString();
+    }
+
+    function toggleRepoAssetsModal() {
+      const modal = document.getElementById('repoModal');
+      if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        loadRepoAssets();
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    async function loadRepoAssets() {
+      const grid = document.getElementById('repoAssetsGrid');
+      grid.innerHTML = '<div class="col-span-full text-center text-xs text-slate-400 py-6"><i class="fa-solid fa-spinner fa-spin"></i> Loading repo assets...</div>';
+      try {
+        const res = await fetch('/api/repo-images');
+        const images = await res.json();
+        grid.innerHTML = '';
+        images.forEach(img => {
+          const card = document.createElement('div');
+          card.className = "relative rounded-xl overflow-hidden border border-white/10 hover:border-purple-400 group cursor-pointer bg-black/60 flex flex-col transition-all";
+          card.onclick = () => {
+            attachedImages.push({ filename: img.filename, url: img.url });
+            renderGallery();
+            toggleRepoAssetsModal();
+            logTerminal(`Attached repo image: ${img.name}`);
+          };
+          card.innerHTML = `
+            <div class="aspect-video w-full overflow-hidden bg-black flex items-center justify-center">
+              <img src="${img.url}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+            </div>
+            <div class="p-2 flex flex-col gap-0.5">
+              <span class="text-xs font-semibold text-white truncate">${img.name}</span>
+              <span class="text-[10px] text-slate-400 truncate">${img.source}</span>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (e) {
+        grid.innerHTML = `<div class="col-span-full text-xs text-red-400">Failed to load: ${e.message}</div>`;
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

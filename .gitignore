@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+env/
+linkedin_user_data/
+chrome_profile/
+*.log
+generated/
+uploads/
